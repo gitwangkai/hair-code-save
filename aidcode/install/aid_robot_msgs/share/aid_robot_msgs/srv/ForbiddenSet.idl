@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/ForbiddenSet.srv
+// generated code does not contain a copyright notice
+
+#include "aid_robot_msgs/msg/StartToEndPoint.idl"
+
+module aid_robot_msgs {
+  module srv {
+    struct ForbiddenSet_Request {
+      uint32 map_id;
+
+      string frame_id;
+
+      sequence<aid_robot_msgs::msg::StartToEndPoint> lines;
+    };
+    struct ForbiddenSet_Response {
+      boolean success;
+
+      string message;
+    };
+  };
+};

@@ -1,0 +1,10 @@
+fisheye_arm_node:
+  ros__parameters:
+      enable_pico: true
+      enable_drivers: true
+      enable_visualization: true
+      pico_ip: "192.168.112.49"
+      pico_port: 12345
+      arm_ip: "192.168.3.100"
+      gripper_serial_port: "com2"
+      gripper_serial_enable: false

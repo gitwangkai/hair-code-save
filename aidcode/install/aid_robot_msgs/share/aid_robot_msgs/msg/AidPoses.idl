@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from aid_robot_msgs/msg/AidPoses.msg
+// generated code does not contain a copyright notice
+
+#include "aid_robot_msgs/msg/AidPose.idl"
+#include "std_msgs/msg/Header.idl"
+
+module aid_robot_msgs {
+  module msg {
+    struct AidPoses {
+      std_msgs::msg::Header header;
+
+      sequence<aid_robot_msgs::msg::AidPose> poses;
+    };
+  };
+};

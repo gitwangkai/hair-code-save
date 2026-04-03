@@ -1,0 +1,17 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/MapOperation.srv
+// generated code does not contain a copyright notice
+
+
+module aid_robot_msgs {
+  module srv {
+    struct MapOperation_Request {
+      string map_file_name;
+    };
+    struct MapOperation_Response {
+      boolean success;
+
+      string message;
+    };
+  };
+};

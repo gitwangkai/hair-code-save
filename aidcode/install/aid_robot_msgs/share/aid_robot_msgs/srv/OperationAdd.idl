@@ -1,0 +1,23 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/OperationAdd.srv
+// generated code does not contain a copyright notice
+
+
+module aid_robot_msgs {
+  module srv {
+    struct OperationAdd_Request {
+      uint32 map_id;
+
+      string frame_id;
+
+      string data;
+
+      string data_type;
+    };
+    struct OperationAdd_Response {
+      boolean success;
+
+      string message;
+    };
+  };
+};

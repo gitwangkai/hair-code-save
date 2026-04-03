@@ -1,6 +1,4 @@
-# ==================== 大文件忽略 ====================
-
-# AI 模型文件
+# 大文件忽略
 *.onnx
 *.pth
 *.pt
@@ -12,58 +10,30 @@
 *.weights
 *.npy
 *.npz
-
-# SDK 和库文件
 *.so
 *.so.*
 *.dll
 *.dylib
 *.a
-*.lib
-*.exe
-
-# 压缩包和大文件
 *.tar
 *.tar.gz
 *.tgz
 *.zip
 *.rar
 *.7z
-
-# 音频/视频（大尺寸）
 *.mp3
 *.mp4
 *.avi
 *.mov
 *.wav
 *.flac
-
-# ==================== 日志和缓存 ====================
-
-# 日志文件
 *.log
 logs/
 log/
-
-# Python 缓存
 __pycache__/
 *.py[cod]
-*$py.class
 *.egg-info/
-.pytest_cache/
-
-# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-
-# 系统文件
 .DS_Store
 Thumbs.db
-
-# 临时文件
-tmp/
-temp/
-*.tmp

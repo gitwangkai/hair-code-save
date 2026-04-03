@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/OperationGet.srv
+// generated code does not contain a copyright notice
+
+#include "nav_msgs/msg/Path.idl"
+
+module aid_robot_msgs {
+  module srv {
+    struct OperationGet_Request {
+      uint32 id;
+
+      string data_type;
+    };
+    struct OperationGet_Response {
+      boolean success;
+
+      nav_msgs::msg::Path message;
+    };
+  };
+};

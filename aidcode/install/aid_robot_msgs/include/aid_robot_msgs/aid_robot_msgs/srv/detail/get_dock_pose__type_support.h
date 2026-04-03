@@ -1,0 +1,58 @@
+// generated from rosidl_generator_c/resource/idl__type_support.h.em
+// with input from aid_robot_msgs:srv/GetDockPose.idl
+// generated code does not contain a copyright notice
+
+#ifndef AID_ROBOT_MSGS__SRV__DETAIL__GET_DOCK_POSE__TYPE_SUPPORT_H_
+#define AID_ROBOT_MSGS__SRV__DETAIL__GET_DOCK_POSE__TYPE_SUPPORT_H_
+
+#include "rosidl_typesupport_interface/macros.h"
+
+#include "aid_robot_msgs/msg/rosidl_generator_c__visibility_control.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "rosidl_runtime_c/message_type_support_struct.h"
+
+// Forward declare the get type support functions for this type.
+ROSIDL_GENERATOR_C_PUBLIC_aid_robot_msgs
+const rosidl_message_type_support_t *
+ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  rosidl_typesupport_c,
+  aid_robot_msgs,
+  srv,
+  GetDockPose_Request
+)();
+
+// already included above
+// #include "rosidl_runtime_c/message_type_support_struct.h"
+
+// Forward declare the get type support functions for this type.
+ROSIDL_GENERATOR_C_PUBLIC_aid_robot_msgs
+const rosidl_message_type_support_t *
+ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  rosidl_typesupport_c,
+  aid_robot_msgs,
+  srv,
+  GetDockPose_Response
+)();
+
+#include "rosidl_runtime_c/service_type_support_struct.h"
+
+// Forward declare the get type support functions for this type.
+ROSIDL_GENERATOR_C_PUBLIC_aid_robot_msgs
+const rosidl_service_type_support_t *
+ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(
+  rosidl_typesupport_c,
+  aid_robot_msgs,
+  srv,
+  GetDockPose
+)();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif  // AID_ROBOT_MSGS__SRV__DETAIL__GET_DOCK_POSE__TYPE_SUPPORT_H_

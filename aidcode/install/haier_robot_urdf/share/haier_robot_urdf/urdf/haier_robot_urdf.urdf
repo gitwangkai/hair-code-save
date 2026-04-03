@@ -1,0 +1,1109 @@
+<?xml version="1.0" ?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="haier_robot_urdf">
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+      <origin xyz="0 0 0.001" rpy="0 0 0" />
+      <parent link="base_footprint"/>
+      <child link="base_link" />
+  </joint>
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.015208177122212 -0.0131857726362841 0.394661382337817"
+        rpy="0 0 0" />
+      <mass
+        value="3.72525597469527" />
+      <inertia
+        ixx="0.051917754939222"
+        ixy="5.09320963830074E-06"
+        ixz="0.000174857840302246"
+        iyy="0.0504431487581522"
+        iyz="4.78353426176242E-06"
+        izz="0.0549691919646313" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="neck_Link">
+    <inertial>
+      <origin
+        xyz="0.0563099324233664 0.00297941950082348 0.11553169555657"
+        rpy="0 0 0" />
+      <mass
+        value="0.806357974365624" />
+      <inertia
+        ixx="0.00986701017228216"
+        ixy="2.83551806143085E-06"
+        ixz="0.000595830402910241"
+        iyy="0.00349964300262238"
+        iyz="-4.95984414605574E-06"
+        izz="0.00682265485069369" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/neck_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/neck_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="neck_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0067673 -0.017538 0.9976"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="neck_Link" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-0.3491"
+      upper="0.3491"
+      effort="10"
+      velocity="1" />
+  </joint>
+  <link
+    name="scan_Link">
+    <inertial>
+      <origin
+        xyz="-0.00230939162000302 2.42276250062047E-05 -0.00996561941203528"
+        rpy="0 0 0" />
+      <mass
+        value="0.0157450897710222" />
+      <inertia
+        ixx="3.9447773864193E-06"
+        ixy="1.66306753422932E-08"
+        ixz="5.82040781825313E-09"
+        iyy="3.64063853241581E-06"
+        iyz="-7.96182449637008E-10"
+        izz="6.92670576017216E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/scan_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/scan_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="scan_joint"
+    type="fixed">
+    <origin
+      xyz="0.12704 -0.01416 0.13331"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="scan_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="chaosheng_Link">
+    <inertial>
+      <origin
+        xyz="-0.0127921483251625 3.38404336589632E-06 -6.90118869750567E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.016313845562298" />
+      <inertia
+        ixx="3.6113884133947E-06"
+        ixy="3.24550394970747E-10"
+        ixz="-9.5276286504886E-10"
+        iyy="2.11432977959425E-06"
+        iyz="-3.15704327674719E-09"
+        izz="4.19822360391221E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chaosheng_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chaosheng_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="chaosheng_joint"
+    type="fixed">
+    <origin
+      xyz="0.20434 -0.014464 0.070965"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="chaosheng_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_wheel_Link">
+    <inertial>
+      <origin
+        xyz="6.31346567474128E-05 -0.00222664462751201 3.51822847494965E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.596488530548554" />
+      <inertia
+        ixx="0.000652657202596767"
+        ixy="4.81423803443158E-08"
+        ixz="-3.46080631342875E-08"
+        iyy="0.00100158221862475"
+        iyz="3.08930978937317E-08"
+        izz="0.000652713860733464" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/left_wheel_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/left_wheel_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.024663 0.16656 0.044971"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_wheel_Link" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="right_wheel_Link">
+    <inertial>
+      <origin
+        xyz="-6.6493676204437E-05 0.00222664462751204 2.8326119883168E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.596488530548553" />
+      <inertia
+        ixx="0.000652650572407517"
+        ixy="5.11325935651953E-08"
+        ixz="2.78945237552811E-08"
+        iyy="0.00100158221862475"
+        iyz="-2.56423508338513E-08"
+        izz="0.000652720490922716" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/right_wheel_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/right_wheel_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.0246634666708763 -0.194936002887546 0.0449708734659776"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_wheel_Link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="base_camera_Link">
+    <inertial>
+      <origin
+        xyz="0.208710445348841 0.00127692879832611 0.309044823070044"
+        rpy="0 0 0" />
+      <mass
+        value="9.14104878507359" />
+      <inertia
+        ixx="0.405423914128671"
+        ixy="-0.00481231463720316"
+        ixz="-0.488066543135856"
+        iyy="1.49213453202913"
+        iyz="-0.0022799911552727"
+        izz="1.3347034177817" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/base_camera_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/base_camera_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_camera_joint"
+    type="fixed">
+    <origin
+      xyz="0.179665327641176 -0.0141860037279062 0.0950579865488091"
+      rpy="0 -1.13446401379632 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_camera_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="x_camera_Link">
+    <inertial>
+      <origin
+        xyz="0.404357159008212 0.00136114627897602 -0.400533699867706"
+        rpy="0 0 0" />
+      <mass
+        value="9.14104878507359" />
+      <inertia
+        ixx="0.794847678155582"
+        ixy="0.00410014578532246"
+        ixz="0.66965782656915"
+        iyy="1.49213453202914"
+        iyz="-0.00339787233054215"
+        izz="0.945279653754786" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/x_camera_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/x_camera_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="x_camera_joint"
+    type="fixed">
+    <origin
+      xyz="0.0346912869368974 -0.0142702212085561 0.982035528560661"
+      rpy="0 0.872664625997166 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="x_camera_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="chuan_xyjc1_Link">
+    <inertial>
+      <origin
+        xyz="-0.0077305658372978 0.000323032683364189 -0.00015208257015778"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025055192625433" />
+      <inertia
+        ixx="1.61617880288873E-07"
+        ixy="3.67544297318429E-09"
+        ixz="-5.09748788346259E-09"
+        iyy="1.57537615353748E-07"
+        iyz="1.4333836959899E-08"
+        izz="4.98944906305431E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc1_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc1_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="chuan_xyjc1_joint"
+    type="fixed">
+    <origin
+      xyz="-0.2107 0.028031 0.0031058"
+      rpy="0 1.5708 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="chuan_xyjc1_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="chuan_xyjc2_Link">
+    <inertial>
+      <origin
+        xyz="-0.0077305658372978 0.000323032683364192 -0.00015208257015778"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025055192625433" />
+      <inertia
+        ixx="1.61617880288873E-07"
+        ixy="3.67544297318429E-09"
+        ixz="-5.0974878834626E-09"
+        iyy="1.57537615353748E-07"
+        iyz="1.4333836959899E-08"
+        izz="4.98944906305431E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc2_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc2_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="chuan_xyjc2_joint"
+    type="fixed">
+    <origin
+      xyz="-0.210704939279154 -0.0564031266702247 0.00310579090011698"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="chuan_xyjc2_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="chuan_xyjc3_Link">
+    <inertial>
+      <origin
+        xyz="-0.00773056583729781 0.000323032683364192 -0.00015208257015778"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025055192625433" />
+      <inertia
+        ixx="1.61617880288873E-07"
+        ixy="3.6754429731843E-09"
+        ixz="-5.0974878834626E-09"
+        iyy="1.57537615353748E-07"
+        iyz="1.43338369598991E-08"
+        izz="4.98944906305431E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc3_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc3_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="chuan_xyjc3_joint"
+    type="fixed">
+    <origin
+      xyz="0.179029522320545 0.0280311208941199 0.00310579090011698"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="chuan_xyjc3_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="chuan_xyjc4_Link">
+    <inertial>
+      <origin
+        xyz="-0.00773056583729781 0.000323032683364199 -0.00015208257015778"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025055192625433" />
+      <inertia
+        ixx="1.61617880288873E-07"
+        ixy="3.67544297318429E-09"
+        ixz="-5.0974878834626E-09"
+        iyy="1.57537615353748E-07"
+        iyz="1.4333836959899E-08"
+        izz="4.98944906305431E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc4_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/chuan_xyjc4_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="chuan_xyjc4_joint"
+    type="fixed">
+    <origin
+      xyz="0.17903 -0.056403 0.0031058"
+      rpy="0 1.5708 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="chuan_xyjc4_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="arm_base_Link">
+    <inertial>
+      <origin
+        xyz="-0.0024851 -0.00012523 -0.0036536"
+        rpy="0 0 0" />
+      <mass
+        value="0.15802" />
+      <inertia
+        ixx="0.00020336"
+        ixy="2.8345E-08"
+        ixz="8.2174E-07"
+        iyy="0.00013459"
+        iyz="8.3777E-07"
+        izz="0.00015909" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/arm_base_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/arm_base_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="arm_base_joint"
+    type="fixed">
+    <origin
+      xyz="-0.015245 -0.08600 0.9302"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="arm_base_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <link
+    name="Link1">
+    <inertial>
+      <origin
+        xyz="0.000167976356464209 -0.00188388075747501 0.0232584946597909"
+        rpy="0 0 0" />
+      <mass
+        value="0.205980291855384" />
+      <inertia
+        ixx="0.000170475379418929"
+        ixy="2.60143805474045E-08"
+        ixz="-1.46208905871496E-06"
+        iyy="0.000151108381328382"
+        iyz="1.29166365933555E-06"
+        izz="0.00013883397154334" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J1-0"
+    type="revolute">
+    <origin
+      xyz="0.08 0 0"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="arm_base_Link" />
+    <child
+      link="Link1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.134"
+      upper="1.7453"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Link2">
+    <inertial>
+      <origin
+        xyz="0.00270401887448908 0.0372099550433866 0.0025921910405549"
+        rpy="0 0 0" />
+      <mass
+        value="0.634431894115613" />
+      <inertia
+        ixx="0.000830200507719402"
+        ixy="1.90271117281648E-05"
+        ixz="-1.2542594022379E-07"
+        iyy="0.000379461521170255"
+        iyz="-0.000125992381913763"
+        izz="0.000964008961646159" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J2-0"
+    type="revolute">
+    <origin
+      xyz="0 0 0.0484"
+      rpy="3.1416 -1.5708 0" />
+    <parent
+      link="Link1" />
+    <child
+      link="Link2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="1.832"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Link3">
+    <inertial>
+      <origin
+        xyz="0.0035780435406267 0.00132138677408653 0.0846003440426877"
+        rpy="0 0 0" />
+      <mass
+        value="0.636838841935949" />
+      <inertia
+        ixx="0.00136359302465652"
+        ixy="1.28840757224665E-06"
+        ixz="6.11371488997182E-05"
+        iyy="0.00114943379386862"
+        iyz="-5.17488683990922E-05"
+        izz="0.000340317645734933" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J3-0"
+    type="revolute">
+    <origin
+      xyz="0 0.10454 0"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="Link2" />
+    <child
+      link="Link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.872"
+      upper="0.872"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Link4">
+    <inertial>
+      <origin
+        xyz="0.00113436601942974 0.0448027578701531 0.00047634934086686"
+        rpy="0 0 0" />
+      <mass
+        value="0.452922931897003" />
+      <inertia
+        ixx="0.000452910653861847"
+        ixy="-3.36969318890318E-05"
+        ixz="2.00787902766749E-07"
+        iyy="0.000214408599215112"
+        iyz="2.32708645473892E-06"
+        izz="0.000568506978264728" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J4-0"
+    type="revolute">
+    <origin
+      xyz="0 0.003 0.15059"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="Link3" />
+    <child
+      link="Link4" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Link5">
+    <inertial>
+      <origin
+        xyz="-0.00109477253104459 -0.0026717348102875 0.0534396023710457"
+        rpy="0 0 0" />
+      <mass
+        value="0.631732199744874" />
+      <inertia
+        ixx="0.000545062261408079"
+        ixy="1.88881716471818E-06"
+        ixz="1.18645209437828E-05"
+        iyy="0.000655529327836941"
+        iyz="3.62095922456345E-05"
+        izz="0.000232298076477032" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J5-0"
+    type="revolute">
+    <origin
+      xyz="0.0035 0.09341 -0.00046738"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="Link4" />
+    <child
+      link="Link5" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.483"
+      upper="1.483"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Link6">
+    <inertial>
+      <origin
+        xyz="-0.00282362693732533 1.46681182755515E-08 2.97284916438083E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.00437840379816812" />
+      <inertia
+        ixx="5.22958479221967E-07"
+        ixy="-8.4521144099021E-14"
+        ixz="-2.59473343572621E-09"
+        iyy="7.30809511766738E-07"
+        iyz="5.45395017040025E-13"
+        izz="2.33544490942303E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J6-0"
+    type="revolute">
+    <origin
+      xyz="0 0 0.1364"
+      rpy="-1.5708 0 -1.5708" />
+    <parent
+      link="Link5" />
+    <child
+      link="Link6" />
+    <axis
+      xyz="0.0089639 0 0.99996" />
+    <limit
+      lower="-0.523"
+      upper="0.523"
+      effort="0"
+      velocity="0" />
+  </joint>
+ <link
+    name="Link7">
+    <inertial>
+      <origin
+        xyz="0.00440710144506913 0.0809316541454831 0.00725403497616792"
+        rpy="0 0 0" />
+      <mass
+        value="0.221318017031017" />
+      <inertia
+        ixx="5.55718172004111E-05"
+        ixy="-6.08699563265625E-06"
+        ixz="-8.50905707446603E-07"
+        iyy="3.70251570708662E-05"
+        iyz="-9.48135908723222E-07"
+        izz="7.69548113319137E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link7-five.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://haier_robot_urdf/meshes/Link7-five.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J7-0"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="3.1416 -1.5618 0" />
+    <parent
+      link="Link6" />
+    <child
+      link="Link7" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.12216"
+      upper="0.12216"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link name="joint8_Link"/>
+  <joint name="joint8" type="fixed">
+    <origin xyz="0.0 0.11 0.0" rpy="1.57 0.0 0.0"/>
+    <parent link="Link7"/>
+    <child link="joint8_Link"/>
+  </joint>
+
+</robot>

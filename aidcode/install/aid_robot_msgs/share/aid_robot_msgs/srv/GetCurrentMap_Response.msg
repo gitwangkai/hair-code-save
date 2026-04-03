@@ -1,0 +1,5 @@
+
+bool success
+uint32 map_id
+string map_file
+string map_name

@@ -1,0 +1,6 @@
+string frame_id
+string type
+uint32 map_id
+StartToEndPoint[] data
+Rectangle[] rectangle_array
+

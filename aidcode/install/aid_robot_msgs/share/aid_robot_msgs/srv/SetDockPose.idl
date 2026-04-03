@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/SetDockPose.srv
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Pose.idl"
+
+module aid_robot_msgs {
+  module srv {
+    struct SetDockPose_Request {
+      geometry_msgs::msg::Pose point;
+
+      uint32 map_id;
+    };
+    struct SetDockPose_Response {
+      string message;
+
+      boolean success;
+    };
+  };
+};

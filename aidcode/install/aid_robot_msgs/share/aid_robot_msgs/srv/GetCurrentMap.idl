@@ -1,0 +1,21 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/GetCurrentMap.srv
+// generated code does not contain a copyright notice
+
+
+module aid_robot_msgs {
+  module srv {
+    struct GetCurrentMap_Request {
+      uint8 structure_needs_at_least_one_member;
+    };
+    struct GetCurrentMap_Response {
+      boolean success;
+
+      uint32 map_id;
+
+      string map_file;
+
+      string map_name;
+    };
+  };
+};

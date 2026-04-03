@@ -1,0 +1,27 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/FindBestVelocity.srv
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Twist.idl"
+#include "std_msgs/msg/Header.idl"
+
+module aid_robot_msgs {
+  module srv {
+    struct FindBestVelocity_Request {
+      std_msgs::msg::Header header;
+
+      float max_angular_velocity;
+
+      float max_speed;
+
+      float len;
+    };
+    struct FindBestVelocity_Response {
+      geometry_msgs::msg::Twist cmd_vel;
+
+      boolean success;
+
+      string msg;
+    };
+  };
+};

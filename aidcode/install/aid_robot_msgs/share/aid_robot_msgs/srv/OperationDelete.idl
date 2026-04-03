@@ -1,0 +1,19 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from aid_robot_msgs/srv/OperationDelete.srv
+// generated code does not contain a copyright notice
+
+
+module aid_robot_msgs {
+  module srv {
+    struct OperationDelete_Request {
+      uint32 id;
+
+      string data_type;
+    };
+    struct OperationDelete_Response {
+      boolean success;
+
+      string message;
+    };
+  };
+};

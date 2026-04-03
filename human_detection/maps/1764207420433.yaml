@@ -1,0 +1,6 @@
+image: /root/maps/1764207420433.pgm
+resolution: 0.050000
+origin: [-3.784569, -10.232089, 0.0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

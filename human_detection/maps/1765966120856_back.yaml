@@ -1,0 +1,7 @@
+image: 1765966120856_back.png
+mode: scale
+resolution: 0.05
+origin: [-16, -15.2, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "profiles": {
+    "moonshot:default": {
+      "type": "api_key",
+      "provider": "moonshot",
+      "key": "sk-kimi-pBDpfQTKjrAycwrXjmbk3br42FUqhxMLfbKVUQOJp6cJz2Y54Erra8hKyakRAJUW"
+    },
+    "kimi:default": {
+      "type": "api_key",
+      "provider": "kimi",
+      "key": "sk-kimi-pBDpfQTKjrAycwrXjmbk3br42FUqhxMLfbKVUQOJp6cJz2Y54Erra8hKyakRAJUW"
+    }
+  },
+  "lastGood": {
+    "moonshot": "moonshot:default",
+    "kimi": "kimi:default"
+  },
+  "usageStats": {
+    "moonshot:default": {
+      "errorCount": 0,
+      "lastFailureAt": 1774919759257,
+      "lastUsed": 1774919759276
+    },
+    "kimi:default": {
+      "errorCount": 0,
+      "lastUsed": 1775033457934
+    }
+  }
+}

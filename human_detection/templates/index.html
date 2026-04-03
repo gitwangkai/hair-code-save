@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能迎宾机器人 - 监控系统</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .video-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            background: #000;
+        }
+        
+        .video-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .video-placeholder .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .control-panel {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+        
+        .log-container {
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .log-time {
+            color: #6b7280;
+        }
+        
+        .log-info { color: #60a5fa; }
+        .log-success { color: #34d399; }
+        .log-warning { color: #fbbf24; }
+        .log-error { color: #f87171; }
+        
+        .greeting-banner {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+        
+        .greeting-banner.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .register-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .register-modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 20px;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .card {
+                flex: 1;
+                min-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 智能迎宾机器人监控系统</h1>
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">离线</span>
+            </div>
+            <div class="status-item">
+                <span>FPS: <strong id="fpsValue">0</strong></span>
+            </div>
+            <div class="status-item">
+                <span>检测: <strong id="personCount">0</strong>人</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="video-section">
+            <div class="video-container">
+                <div class="video-placeholder" id="videoPlaceholder">
+                    <div class="icon">📹</div>
+                    <div>点击"开始监控"启动视频流</div>
+                </div>
+                <img id="videoStream" style="display: none;">
+            </div>
+            <div class="control-panel">
+                <button class="btn btn-success" id="btnStart" onclick="startSystem()">
+                    ▶️ 开始监控
+                </button>
+                <button class="btn btn-danger" id="btnStop" onclick="stopSystem()" disabled>
+                    ⏹️ 停止
+                </button>
+                <button class="btn btn-secondary" onclick="takeSnapshot()">
+                    📷 截图
+                </button>
+                <button class="btn btn-primary" onclick="showRegisterModal()">
+                    👤 注册人脸
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="card">
+                <h3>📊 统计数据</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statVisitors">0</div>
+                        <div class="stat-label">总访客</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statKnown">0</div>
+                        <div class="stat-label">已知访客</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statUnknown">0</div>
+                        <div class="stat-label">未知访客</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statPTZ">0°</div>
+                        <div class="stat-label">云台角度</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statArm" style="font-size: 14px;">未连接</div>
+                        <div class="stat-label">机械臂</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📝 系统日志</h3>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">系统就绪，等待启动...</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🦾 机械臂控制</h3>
+                <div class="arm-status" id="armStatusText" style="text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 15px; color: #a0aec0;">
+                    状态: <span id="armStatusValue">未连接</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn btn-secondary" id="btnArmConnect" onclick="armConnect()" style="padding: 8px; font-size: 12px;">
+                        🔌 连接
+                    </button>
+                    <button class="btn btn-secondary" id="btnArmHome" onclick="armHome()" style="padding: 8px; font-size: 12px;" disabled>
+                        🏠 回原点
+                    </button>
+                    <button class="btn btn-primary" id="btnArmWave" onclick="armWave()" style="padding: 8px; font-size: 12px;" disabled>
+                        👋 挥手
+                    </button>
+                    <button class="btn btn-primary" id="btnArmWelcome" onclick="armWelcome()" style="padding: 8px; font-size: 12px;" disabled>
+                        🎉 欢迎
+                    </button>
+                    <button class="btn btn-secondary" id="btnArmOpen" onclick="armGripper('open')" style="padding: 8px; font-size: 12px;" disabled>
+                        ✋ 张开夹爪
+                    </button>
+                    <button class="btn btn-secondary" id="btnArmClose" onclick="armGripper('close')" style="padding: 8px; font-size: 12px;" disabled>
+                        ✊ 闭合夹爪
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>👋 挥手动作</h3>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #a0aec0; font-size: 12px;">触发间隔 (秒)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="waveIntervalInput" value="60" min="0" max="3600" 
+                               style="flex: 1; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-size: 12px;">
+                        <button class="btn btn-secondary" onclick="updateWaveInterval()" style="padding: 8px 12px; font-size: 12px;">
+                            设置
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 音频选择 -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #a0aec0; font-size: 12px;">提示音频</label>
+                    <select id="audioSelect" onchange="onAudioChange()" 
+                            style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; font-size: 12px;">
+                        <option>加载中...</option>
+                    </select>
+                    <!-- 音频播放器 -->
+                    <audio id="audioPlayer" preload="auto" style="width: 100%; margin-top: 8px; height: 30px;">
+                        您的浏览器不支持音频播放
+                    </audio>
+                </div>
+                
+                <div class="wave-status" id="waveStatusText" style="text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 15px; color: #a0aec0; font-size: 12px;">
+                    状态: <span id="waveStatusValue">待机</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn btn-primary" id="btnWaveTrigger" onclick="waveTrigger()" style="padding: 8px; font-size: 12px;">
+                        👋 触发挥手
+                    </button>
+                    <button class="btn btn-secondary" id="btnWaveForce" onclick="waveForceTrigger()" style="padding: 8px; font-size: 12px;">
+                        ⚡ 强制触发
+                    </button>
+                    <button class="btn btn-secondary" id="btnWaveStop" onclick="waveStop()" style="padding: 8px; font-size: 12px;">
+                        ⏹️ 停止动作
+                    </button>
+                    <button class="btn btn-secondary" id="btnWaveReset" onclick="waveResetStats()" style="padding: 8px; font-size: 12px;">
+                        🔄 重置统计
+                    </button>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #a0aec0;">触发次数:</span>
+                        <span id="waveTriggerCount" style="color: #667eea;">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #a0aec0;">跳过次数:</span>
+                        <span id="waveSkipCount" style="color: #fbbf24;">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #a0aec0;">剩余冷却:</span>
+                        <span id="waveCooldown" style="color: #10b981;">0秒</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="greeting-banner" id="greetingBanner">
+        欢迎光临！
+    </div>
+    
+    <div class="register-modal" id="registerModal">
+        <div class="modal-content">
+            <h3>注册新访客</h3>
+            <input type="text" id="registerName" placeholder="请输入姓名..." maxlength="20">
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="hideRegisterModal()">取消</button>
+                <button class="btn btn-primary" onclick="registerFace()">确认注册</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Socket.IO 连接
+        const socket = io({
+            transports: ['polling'],
+            upgrade: false,
+            reconnection: true,
+            reconnectionAttempts: 10,
+            reconnectionDelay: 1000
+        });
+        
+        let isRunning = false;
+        let audioFiles = [];
+        let currentAudio = null;
+        
+        // 音频列表更新
+        socket.on('audio_list', function(data) {
+            audioFiles = data.audio_files || [];
+            const select = document.getElementById('audioSelect');
+            
+            if (audioFiles.length === 0) {
+                select.innerHTML = '<option>无音频文件</option>';
+                return;
+            }
+            
+            select.innerHTML = '';
+            audioFiles.forEach(function(audio) {
+                const option = document.createElement('option');
+                option.value = audio.url;
+                option.textContent = audio.name;
+                select.appendChild(option);
+            });
+            
+            // 设置默认选中
+            if (data.default) {
+                select.value = data.default.url;
+                loadAudio(data.default.url);
+            }
+            
+            addLog(`已加载 ${audioFiles.length} 个音频文件`, 'success');
+        });
+        
+        // 播放音频命令
+        socket.on('play_audio', function(data) {
+            console.log('收到播放命令:', data);
+            addLog(`播放音频: ${data.name}`, 'info');
+            playAudio(data.url);
+        });
+        
+        // 加载音频到播放器
+        function loadAudio(url) {
+            const player = document.getElementById('audioPlayer');
+            player.src = url;
+            player.load();
+        }
+        
+        // 播放音频
+        function playAudio(url) {
+            const player = document.getElementById('audioPlayer');
+            if (url && player.src !== url) {
+                player.src = url;
+                player.load();
+            }
+            player.play().catch(function(e) {
+                console.error('播放失败:', e);
+                addLog('音频播放失败(可能需要用户交互)', 'warning');
+            });
+        }
+        
+        // 音频选择变化
+        function onAudioChange() {
+            const select = document.getElementById('audioSelect');
+            const url = select.value;
+            loadAudio(url);
+            addLog(`已选择音频: ${select.options[select.selectedIndex].text}`, 'info');
+        }
+        
+        // 连接成功
+        socket.on('connect', function() {
+            console.log('Connected to server');
+            addLog('已连接到服务器', 'success');
+        });
+        
+        // 断开连接
+        socket.on('disconnect', function() {
+            console.log('Disconnected from server');
+            addLog('与服务器断开连接', 'warning');
+            updateStatus('离线', false);
+        });
+        
+        // 视频帧
+        socket.on('video_frame', function(data) {
+            const img = document.getElementById('videoStream');
+            const placeholder = document.getElementById('videoPlaceholder');
+            
+            img.src = data.image;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        });
+        
+        // 状态更新
+        socket.on('status_update', function(status) {
+            document.getElementById('fpsValue').textContent = status.fps;
+            document.getElementById('personCount').textContent = status.persons;
+            document.getElementById('statVisitors').textContent = status.visitors;
+            
+            // 解析云台角度
+            const ptz = status.ptz.split(',');
+            document.getElementById('statPTZ').textContent = 
+                `P:${parseInt(ptz[0])}° T:${parseInt(ptz[1])}°`;
+        });
+        
+        // 日志更新
+        socket.on('log_update', function(log) {
+            addLog(log.message, log.level);
+        });
+        
+        // 系统启动
+        socket.on('system_started', function() {
+            isRunning = true;
+            updateStatus('运行中', true);
+            document.getElementById('btnStart').disabled = true;
+            document.getElementById('btnStop').disabled = false;
+            addLog('系统启动成功', 'success');
+            
+            // 定期获取挥手状态
+            startWaveStatusUpdate();
+        });
+        
+        // 定期获取挥手状态
+        let waveStatusInterval;
+        function startWaveStatusUpdate() {
+            if (waveStatusInterval) clearInterval(waveStatusInterval);
+            waveStatusInterval = setInterval(function() {
+                if (isRunning) {
+                    socket.emit('wave_get_status');
+                }
+            }, 1000);  // 每秒更新一次
+        }
+        
+        // 系统停止
+        socket.on('system_stopped', function() {
+            isRunning = false;
+            updateStatus('已停止', false);
+            document.getElementById('btnStart').disabled = false;
+            document.getElementById('btnStop').disabled = true;
+            addLog('系统已停止', 'info');
+        });
+        
+        // 错误
+        socket.on('system_error', function(data) {
+            addLog('错误: ' + data.message, 'error');
+        });
+        
+        // 迎宾
+        socket.on('greeting', function(data) {
+            showGreeting(data.message);
+            addLog('迎宾: ' + data.message, 'success');
+            
+            // 更新统计
+            if (data.is_new) {
+                document.getElementById('statKnown').textContent = 
+                    parseInt(document.getElementById('statKnown').textContent) + 1;
+            } else {
+                document.getElementById('statUnknown').textContent = 
+                    parseInt(document.getElementById('statUnknown').textContent) + 1;
+            }
+        });
+        
+        // 注册结果
+        socket.on('register_result', function(data) {
+            if (data.success) {
+                addLog('人脸注册成功: ' + data.name, 'success');
+                hideRegisterModal();
+                alert('注册成功: ' + data.name);
+            } else {
+                addLog('注册失败: ' + data.message, 'error');
+                alert('注册失败: ' + data.message);
+            }
+        });
+        
+        // 启动系统
+        function startSystem() {
+            socket.emit('start_system');
+        }
+        
+        // 停止系统
+        function stopSystem() {
+            socket.emit('stop_system');
+            document.getElementById('videoStream').style.display = 'none';
+            document.getElementById('videoPlaceholder').style.display = 'flex';
+        }
+        
+        // 截图
+        function takeSnapshot() {
+            const img = document.getElementById('videoStream');
+            if (img.style.display === 'none') {
+                alert('请先启动监控');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = 'snapshot_' + new Date().getTime() + '.jpg';
+            link.href = img.src;
+            link.click();
+            addLog('截图已保存', 'success');
+        }
+        
+        // 显示注册弹窗
+        function showRegisterModal() {
+            if (!isRunning) {
+                alert('请先启动监控');
+                return;
+            }
+            document.getElementById('registerModal').classList.add('show');
+            document.getElementById('registerName').focus();
+        }
+        
+        // 隐藏注册弹窗
+        function hideRegisterModal() {
+            document.getElementById('registerModal').classList.remove('show');
+            document.getElementById('registerName').value = '';
+        }
+        
+        // 注册人脸
+        function registerFace() {
+            const name = document.getElementById('registerName').value.trim();
+            if (!name) {
+                alert('请输入姓名');
+                return;
+            }
+            socket.emit('register_face', {name: name});
+        }
+        
+        // 更新状态显示
+        function updateStatus(text, isOnline) {
+            document.getElementById('statusText').textContent = text;
+            const dot = document.getElementById('statusDot');
+            dot.style.background = isOnline ? '#10b981' : '#ef4444';
+            dot.style.animation = isOnline ? 'pulse 2s infinite' : 'none';
+        }
+        
+        // ========== 机械臂控制 ==========
+        
+        // 机械臂状态更新
+        socket.on('arm_status', function(data) {
+            const statusEl = document.getElementById('armStatusValue');
+            const statArmEl = document.getElementById('statArm');
+            
+            statusEl.textContent = data.status;
+            statArmEl.textContent = data.status;
+            
+            // 根据状态更新颜色
+            if (data.connected) {
+                statusEl.style.color = '#10b981';
+                statArmEl.style.color = '#10b981';
+            } else {
+                statusEl.style.color = '#ef4444';
+                statArmEl.style.color = '#ef4444';
+            }
+            
+            // 更新按钮状态
+            updateArmButtons(data.status === 'ready');
+        });
+        
+        // 机械臂操作结果
+        socket.on('arm_result', function(data) {
+            if (data.success) {
+                addLog('机械臂操作成功: ' + data.action, 'success');
+            } else {
+                addLog('机械臂操作失败: ' + (data.message || data.action), 'error');
+            }
+        });
+        
+        // 更新机械臂按钮状态
+        function updateArmButtons(enabled) {
+            document.getElementById('btnArmHome').disabled = !enabled;
+            document.getElementById('btnArmWave').disabled = !enabled;
+            document.getElementById('btnArmWelcome').disabled = !enabled;
+            document.getElementById('btnArmOpen').disabled = !enabled;
+            document.getElementById('btnArmClose').disabled = !enabled;
+        }
+        
+        // 连接机械臂
+        function armConnect() {
+            socket.emit('arm_connect');
+            addLog('正在连接机械臂...', 'info');
+        }
+        
+        // 机械臂回原点
+        function armHome() {
+            socket.emit('arm_home');
+            addLog('机械臂回原点', 'info');
+        }
+        
+        // 挥手动作
+        function armWave() {
+            socket.emit('arm_wave');
+            addLog('执行挥手动作', 'info');
+        }
+        
+        // 欢迎动作
+        function armWelcome() {
+            socket.emit('arm_welcome');
+            addLog('执行欢迎动作', 'info');
+        }
+        
+        // 夹爪控制
+        function armGripper(action) {
+            socket.emit('arm_gripper', {action: action});
+            addLog('夹爪' + (action === 'open' ? '张开' : '闭合'), 'info');
+        }
+        
+        // ========== 挥手动作控制 ==========
+        
+        // 挥手状态更新
+        socket.on('wave_status', function(data) {
+            const statusEl = document.getElementById('waveStatusValue');
+            
+            // 更新状态文本
+            if (data.is_running) {
+                statusEl.textContent = '执行中...';
+                statusEl.style.color = '#fbbf24';
+            } else if (data.remaining_cooldown > 0) {
+                statusEl.textContent = '冷却中';
+                statusEl.style.color = '#f87171';
+            } else {
+                statusEl.textContent = '待机';
+                statusEl.style.color = '#10b981';
+            }
+            
+            // 更新统计
+            document.getElementById('waveTriggerCount').textContent = data.trigger_count || 0;
+            document.getElementById('waveSkipCount').textContent = data.skip_count || 0;
+            document.getElementById('waveCooldown').textContent = 
+                (data.remaining_cooldown || 0).toFixed(1) + '秒';
+            
+            // 显示消息
+            if (data.message) {
+                addLog(data.message, data.success !== undefined ? (data.success ? 'success' : 'error') : 'info');
+            }
+        });
+        
+        // 挥手配置更新
+        socket.on('wave_config', function(data) {
+            addLog(data.message || '配置已更新', 'success');
+            document.getElementById('waveIntervalInput').value = data.min_interval;
+        });
+        
+        // 触发挥手
+        function waveTrigger() {
+            socket.emit('wave_trigger', {force: false});
+        }
+        
+        // 强制触发
+        function waveForceTrigger() {
+            socket.emit('wave_trigger', {force: true});
+        }
+        
+        // 停止动作
+        function waveStop() {
+            socket.emit('wave_stop');
+        }
+        
+        // 重置统计
+        function waveResetStats() {
+            socket.emit('wave_reset_stats');
+            addLog('统计已重置', 'info');
+        }
+        
+        // 更新触发间隔
+        function updateWaveInterval() {
+            const interval = parseInt(document.getElementById('waveIntervalInput').value);
+            if (isNaN(interval) || interval < 0) {
+                alert('请输入有效的间隔时间(秒)');
+                return;
+            }
+            socket.emit('wave_set_interval', {interval: interval});
+        }
+        
+        // 添加日志
+        function addLog(message, level) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            const time = new Date().toLocaleTimeString('zh-CN', {hour12: false});
+            entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-${level}">${message}</span>`;
+            
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+            
+            // 限制日志数量
+            while (container.children.length > 100) {
+                container.removeChild(container.firstChild);
+            }
+        }
+        
+        // 显示迎宾横幅
+        let greetingTimeout;
+        function showGreeting(message) {
+            const banner = document.getElementById('greetingBanner');
+            banner.textContent = message;
+            banner.classList.add('show');
+            
+            clearTimeout(greetingTimeout);
+            greetingTimeout = setTimeout(() => {
+                banner.classList.remove('show');
+            }, 5000);
+        }
+        
+        // 按 Enter 确认注册
+        document.getElementById('registerName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                registerFace();
+            }
+        });
+        
+        // 点击遮罩关闭弹窗
+        document.getElementById('registerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideRegisterModal();
+            }
+        });
+    </script>
+</body>
+</html>

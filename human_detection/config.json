@@ -1,0 +1,62 @@
+{
+  "system": {
+    "name": "智能迎宾机器人",
+    "version": "1.0.0",
+    "debug": false
+  },
+  "camera": {
+    "source": "/dev/video_header",
+    "width": 640,
+    "height": 360,
+    "fps": 30
+  },
+  "detection": {
+    "yolo_model": "yolov8n.pt",
+    "confidence_threshold": 0.5,
+    "welcome_distance": 2.0,
+    "detect_interval": 3
+  },
+  "face_recognition": {
+    "enabled": true,
+    "face_db_path": "data/face_database.pkl",
+    "recognition_threshold": 0.6,
+    "min_greet_interval": 10
+  },
+  "ptz": {
+    "enabled": true,
+    "smooth_factor": 0.3,
+    "dead_zone": 0.1,
+    "pan_range": [-45, 45],
+    "tilt_range": [-30, 30]
+  },
+  "wave_action": {
+    "enabled": true,
+    "mode": "mock",
+    "interval": 60,
+    "script": "/home/aidlux/demo_arm/wave_hand_standalone.py",
+    "audio_file": "/home/aidlux/auto.mp3",
+    "trigger_conditions": {
+      "on_new_visitor": true,
+      "on_known_visitor": false,
+      "min_distance": 0.5,
+      "max_distance": 2.0
+    }
+  },
+  "arm": {
+    "enabled": false,
+    "ip": "192.168.3.100",
+    "mode": "mock"
+  },
+  "web_gui": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "jpeg_quality": 60,
+    "max_stream_fps": 15
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/robot.log",
+    "max_size": 10485760,
+    "backup_count": 5
+  }
+}

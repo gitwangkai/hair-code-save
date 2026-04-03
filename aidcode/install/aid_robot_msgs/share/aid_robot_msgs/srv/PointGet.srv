@@ -1,5 +1,0 @@
-uint32 id
-string data_type
----
-bool success
-aid_robot_msgs/AidPose message

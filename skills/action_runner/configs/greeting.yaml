@@ -1,0 +1,12 @@
+# 迎宾动作配置
+name: 迎宾动作
+description: 检测到人员时的迎宾动作序列
+
+actions:
+  - ["", "forward", [0.5]]
+  - ["parallel", [
+      ["", "wave", []],
+      ["", "rotate", [90]]
+    ]]
+  - ["", "nod", [3]]
+  - ["", "home", []]

@@ -1,4 +1,0 @@
-uint32 map_id
-string frame_id
-string data
-string data_type

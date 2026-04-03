@@ -1,4 +1,0 @@
-motor_control_node:
-  ros__parameters:
-      enable_drivers: true
-      enable_visualization: true

@@ -1,0 +1,69 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+
+stages:          # List of stages for jobs, and their order of execution
+  
+  - build
+  - deploy
+  
+build-amd64-job:    
+  image: harbor.satorob.com/sator/ros_amd64:noetic-build-base
+  stage: build
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  variables:
+    GIT_SUBMODULE_DEPTH: 1
+    GIT_SUBMODULE_STRATEGY: recursive
+    GIT_SUBMODULE_FORCE_HTTPS: "true"
+    RUN_PLATFORM: amd64
+  script: 
+    - echo "Running build"
+    - mkdir build && cd build 
+    - cmake .. && make -j4
+
+  artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME-$RUN_PLATFORM"
+    paths:
+      - build/fw_upgrade
+      - README.md
+
+build-arm64-job:    
+  image: harbor.satorob.com/sator/ros_arm64:noetic-build-base
+  stage: build
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "push"
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  variables:
+    GIT_SUBMODULE_DEPTH: 1
+    GIT_SUBMODULE_STRATEGY: recursive
+    GIT_SUBMODULE_FORCE_HTTPS: "true"
+    RUN_PLATFORM: arm64
+  script: 
+    - echo "Running build"
+    - mkdir build && cd build 
+    - cmake .. && make -j4
+  artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME-$RUN_PLATFORM"
+    paths:
+      - build/fw_upgrade
+      - README.md
+
+deploy-job:      # This job runs in the deploy stage.
+  image: harbor.satorob.com/sator/ros_amd64:noetic-build-base
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."

@@ -1,0 +1,1 @@
+scp -r fw_upgrade test.sh sator@172.16.99.63:ly

@@ -1,3 +1,0 @@
-uint32 id
-string data
-string data_type

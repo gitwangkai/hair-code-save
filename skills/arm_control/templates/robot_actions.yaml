@@ -1,0 +1,204 @@
+# NX-7 机械臂动作配置文件
+# 描述: 预设位姿和动作序列配置
+# 用法: 被 Python 脚本加载使用
+
+# ==================== 系统配置 ====================
+system:
+  robot_ip: "192.168.3.100"
+  init_wait_seconds: 30
+  default_speed_percent: 10
+  move_wait_seconds: 1.0
+  emergency_pose: [0.0, 10.0, 0.0, 30.0, 0.0, 0.0]
+
+# ==================== 关节限位 ====================
+joint_limits:
+  J1: { min: -70.0, max: 200.0, max_speed: 120 }
+  J2: { min:   0.0, max: 120.0, max_speed:  40 }
+  J3: { min: -55.0, max:  55.0, max_speed:  70 }
+  J4: { min:   0.0, max: 120.0, max_speed:  65 }
+  J5: { min: -85.0, max:  85.0, max_speed: 253 }
+  J6: { min: -20.0, max:  20.0, max_speed: 342 }
+  J7: { min: -10.0, max:  10.0, max_speed: 342 }
+
+# ==================== 预设位姿 ====================
+poses:
+  # 基础位姿
+  home:
+    name: "归零位"
+    description: "所有关节归零"
+    angles: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    tags: ["safe", "default"]
+  
+  tuck:
+    name: "收回位"
+    description: "移动底盘前使用，避免碰撞"
+    angles: [0.0, 10.0, 0.0, 30.0, 0.0, 0.0]
+    tags: ["safe", "mobile"]
+  
+  # 交互位姿
+  ready:
+    name: "准备位"
+    description: "交互准备姿态"
+    angles: [0.0, 30.0, 0.0, 60.0, 0.0, 0.0]
+    tags: ["interactive"]
+  
+  desktop_ready:
+    name: "桌面待机"
+    description: "桌面交互待机姿态"
+    angles: [0.0, 30.0, 0.0, 60.0, 0.0, 0.0]
+    tags: ["interactive", "desktop"]
+  
+  desktop_grasp:
+    name: "桌面抓取"
+    description: "低高度抓取姿态"
+    angles: [0.0, 90.0, 0.0, 90.0, 0.0, 0.0]
+    tags: ["grasp", "desktop"]
+  
+  handover:
+    name: "递物位"
+    description: "向人递送物品的姿态"
+    angles: [0.0, 60.0, 0.0, 80.0, 0.0, 0.0]
+    tags: ["handover", "interactive"]
+  
+  # 特殊位姿
+  wave_prepare:
+    name: "挥手准备"
+    description: "挥手动作起始位姿"
+    angles: [64.3, 0, 13.2, 85.9, -84.8, 0]
+    tags: ["wave"]
+  
+  inspection:
+    name: "检测位"
+    description: "视觉检测姿态"
+    angles: [0.0, 45.0, 0.0, 75.0, 0.0, 0.0]
+    tags: ["vision"]
+
+# ==================== 动作序列 ====================
+sequences:
+  # 挥手动作
+  wave_hand:
+    name: "挥手"
+    description: "向人员挥手打招呼"
+    repeat: 3
+    poses:
+      - pose: wave_prepare
+        wait: 1.0
+      - pose: wave_prepare
+        wait: 0.5
+        offset: [0, 0, 10, 0, 0, 0]  # J3 +10
+      - pose: wave_prepare
+        wait: 0.5
+        offset: [0, 0, -10, 0, 0, 0]  # J3 -10
+      - pose: wave_prepare
+        wait: 1.0
+  
+  # 抓取流程
+  pick_and_place:
+    name: "抓取放置"
+    description: "完整的抓取-移动-放置流程"
+    poses:
+      - pose: ready
+        wait: 1.5
+      - pose: desktop_grasp
+        wait: 1.5
+      - action: grasp
+        wait: 1.0
+      - pose: handover
+        wait: 1.5
+      - pose: desktop_grasp
+        wait: 1.5
+      - action: release
+        wait: 1.0
+      - pose: ready
+        wait: 1.5
+      - pose: home
+        wait: 1.0
+  
+  # 安全归位
+  safe_return:
+    name: "安全归位"
+    description: "快速安全返回 HOME"
+    poses:
+      - pose: tuck
+        wait: 2.0
+      - pose: home
+        wait: 1.0
+  
+  # 关节范围测试
+  joint_test:
+    name: "关节测试"
+    description: "测试各关节运动范围"
+    poses:
+      - pose: home
+        wait: 1.0
+      - joints: [30, 30, 0, 60, 0, 0]
+        wait: 1.0
+      - joints: [-30, 30, 0, 60, 0, 0]
+        wait: 1.0
+      - joints: [0, 60, 20, 90, 0, 0]
+        wait: 1.0
+      - joints: [0, 60, -20, 90, 0, 0]
+        wait: 1.0
+      - joints: [0, 30, 0, 60, 30, 0]
+        wait: 1.0
+      - joints: [0, 30, 0, 60, -30, 0]
+        wait: 1.0
+      - pose: home
+        wait: 1.0
+
+# ==================== 夹爪控制 ====================
+gripper:
+  # 串口配置
+  serial_port: 
+    linux: "/dev/ttyUSB0"
+    windows: "COM2"
+  baudrate: 115200
+  
+  # 控制指令 (十六进制)
+  commands:
+    grasp: "55AA011409014C044C044C04840332003200320032006400C2"
+    open:  "55AA011409011400140014008403320032003200320064000E"
+    reset: "55AA01140901000000000084033200320032003200640012"
+
+# ==================== 安全配置 ====================
+safety:
+  # 紧急停止触发条件
+  emergency_triggers:
+    - joint_limit_exceeded
+    - communication_timeout
+    - user_interrupt
+    - unknown_error
+  
+  # 超时设置 (秒)
+  timeouts:
+    connection: 60
+    movement: 30
+    initialization: 45
+  
+  # 速度限制
+  speed_limits:
+    normal: 50
+    collaborative: 10
+    test: 5
+  
+  # 负载限制
+  payload:
+    max_kg: 1.0
+    center_of_gravity_offset_mm: 10
+
+# ==================== 动作参数 ====================
+action_params:
+  # 运动参数
+  motion:
+    acceleration_percent: 50
+    deceleration_percent: 50
+  
+  # 混合参数（连续运动）
+  blending:
+    enabled: true
+    radius_mm: 10
+  
+  # 暂停时间
+  delays:
+    between_poses: 0.1
+    after_emergency: 2.0

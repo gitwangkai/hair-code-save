@@ -1,3 +1,0 @@
-geometry_msgs/Point32 center_point
-float32 side_length
-uint8 grayscale

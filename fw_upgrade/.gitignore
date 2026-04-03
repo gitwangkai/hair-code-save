@@ -1,0 +1,7 @@
+*.o
+.vscode-ctags
+.vscode
+*.bin
+.cache
+build/
+*.enc

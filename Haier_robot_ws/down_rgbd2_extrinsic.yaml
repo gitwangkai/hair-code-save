@@ -1,0 +1,7 @@
+base_frame: base_footprint
+child_frame: depth_camera_link
+child_frame_calibrated: rgbd_camera_link
+translation: [0.192877, 0.0436804, 0.0351251]
+rotation_xyzw: [0.0336612, -0.529132, 0.0322627, 0.847258]
+rpy: [0.0522557, -1.1170107, 0.0434636]
+icp_fitness: 0.0336261

@@ -36,15 +36,20 @@ class SafeChassisController(Node):
             max_angular_speed=1.0
         )
         
-        # 发布速度命令
-        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # 发布速度命令（使用海尔机器人系统的话题）
+        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel_remote_ctrl', 10)
         
         # 当前速度
         self.current_linear = 0.0
         self.current_angular = 0.0
+        self.target_linear = 0.0  # 目标速度
+        self.target_angular = 0.0
         
         # 状态显示定时器
         self.display_timer = self.create_timer(0.5, self.display_status)
+        
+        # 速度发布定时器（10Hz）
+        self.cmd_timer = self.create_timer(0.1, self.send_velocity)
         
         self.get_logger().info('安全底盘控制器已启动')
         self.get_logger().info('使用键盘控制（带避障保护）：')
@@ -67,9 +72,12 @@ class SafeChassisController(Node):
         
         # 障碍物信息
         print("【障碍物检测】")
-        print(f"  前方距离: {info['front']:.2f}m" if info['front'] != float('inf') else "  前方距离: --")
-        print(f"  左方距离: {info['left']:.2f}m" if info['left'] != float('inf') else "  左方距离: --")
-        print(f"  右方距离: {info['right']:.2f}m" if info['right'] != float('inf') else "  右方距离: --")
+        front_str = f"{info['front']:.2f}m" if info['front'] != float('inf') else "--"
+        left_str = f"{info['left']:.2f}m" if info['left'] != float('inf') else "--"
+        right_str = f"{info['right']:.2f}m" if info['right'] != float('inf') else "--"
+        print(f"  前方距离: {front_str}")
+        print(f"  左方距离: {left_str}")
+        print(f"  右方距离: {right_str}")
         print()
         
         # 避障状态
@@ -81,8 +89,10 @@ class SafeChassisController(Node):
         
         # 控制状态
         print("【控制状态】")
-        print(f"  目标线速度: {self.current_linear:.2f} m/s")
-        print(f"  目标角速度: {self.current_angular:.2f} rad/s")
+        print(f"  目标线速度: {self.target_linear:.2f} m/s")
+        print(f"  目标角速度: {self.target_angular:.2f} rad/s")
+        print(f"  实际线速度: {self.current_linear:.2f} m/s")
+        print(f"  实际角速度: {self.current_angular:.2f} rad/s")
         
         # 安全状态
         if not self.obstacle_monitor.can_move_forward():
@@ -97,63 +107,60 @@ class SafeChassisController(Node):
         
     def move_forward(self, speed=0.3):
         """前进（带避障检查）"""
-        if self.obstacle_monitor.can_move_forward():
-            self.current_linear = speed
-            self.send_velocity()
-            return True
-        else:
+        self.target_linear = speed
+        if not self.obstacle_monitor.can_move_forward():
             self.get_logger().warn('前方有障碍物，无法前进！')
-            self.stop()
             return False
+        return True
             
     def move_backward(self, speed=0.3):
         """后退（带避障检查）"""
-        if self.obstacle_monitor.can_move_backward():
-            self.current_linear = -speed
-            self.send_velocity()
-            return True
-        else:
+        self.target_linear = -speed
+        if not self.obstacle_monitor.can_move_backward():
             self.get_logger().warn('后方有障碍物，无法后退！')
-            self.stop()
             return False
+        return True
             
     def turn_left(self, speed=0.5):
         """左转（带避障检查）"""
-        if self.obstacle_monitor.can_turn_left():
-            self.current_angular = speed
-            self.send_velocity()
-            return True
-        else:
+        self.target_angular = speed
+        if not self.obstacle_monitor.can_turn_left():
             self.get_logger().warn('左方有障碍物，无法左转！')
-            self.stop()
             return False
+        return True
             
     def turn_right(self, speed=0.5):
         """右转（带避障检查）"""
-        if self.obstacle_monitor.can_turn_right():
-            self.current_angular = -speed
-            self.send_velocity()
-            return True
-        else:
+        self.target_angular = -speed
+        if not self.obstacle_monitor.can_turn_right():
             self.get_logger().warn('右方有障碍物，无法右转！')
-            self.stop()
             return False
+        return True
             
     def stop(self):
         """停止"""
-        self.current_linear = 0.0
-        self.current_angular = 0.0
-        self.send_velocity()
+        self.target_linear = 0.0
+        self.target_angular = 0.0
         
     def send_velocity(self):
-        """发送速度命令"""
-        cmd = Twist()
-        cmd.linear.x = self.current_linear
-        cmd.angular.z = self.current_angular
+        """发送速度命令（定时器回调）"""
+        # 创建目标速度命令
+        target_cmd = Twist()
+        target_cmd.linear.x = self.target_linear
+        target_cmd.angular.z = self.target_angular
         
         # 通过避障监控器获取安全速度
-        safe_cmd = self.obstacle_monitor.get_safe_velocity(cmd)
+        safe_cmd = self.obstacle_monitor.get_safe_velocity(target_cmd)
+        
+        # 更新当前实际速度
+        self.current_linear = safe_cmd.linear.x
+        self.current_angular = safe_cmd.angular.z
+        
+        # 发布安全速度
         self.cmd_pub.publish(safe_cmd)
+        
+        # 处理ROS回调
+        rclpy.spin_once(self, timeout_sec=0)
         
     def keyboard_control(self):
         """键盘控制"""
@@ -181,10 +188,6 @@ class SafeChassisController(Node):
                     elif key == 'q' or key == '\x03':
                         break
                         
-                # 持续发送速度（避障需要实时调整）
-                self.send_velocity()
-                rclpy.spin_once(self, timeout_sec=0.01)
-                
         finally:
             # 恢复终端设置
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
@@ -201,6 +204,7 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
+        controller.stop()
         controller.destroy_node()
         rclpy.shutdown()
 

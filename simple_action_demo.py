@@ -23,7 +23,7 @@ class SimpleActionDemo(Node):
         super().__init__('simple_action_demo')
         
         # 发布器
-        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel_remote_ctrl', 10)
+        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.arm_pub = self.create_publisher(String, '/arm_action', 10)
         
         # 当前速度

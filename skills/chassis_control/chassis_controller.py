@@ -20,7 +20,7 @@ class ChassisController(Node):
         super().__init__('chassis_controller')
         
         # 发布速度命令
-        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel_remote_ctrl', 10)
+        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         
         # 当前速度
         self.current_linear = 0.0

@@ -132,3 +132,9 @@ skills/
 - 所有 Skill 文档使用 Markdown 格式
 - 代码示例必须是可运行的
 - 故障排除要覆盖常见问题
+
+### 智能层
+
+| Skill | 描述 | 状态 | 路径 |
+|-------|------|------|------|
+| [nlp_skill_caller](./nlp_skill_caller/) | 自然语言 Skill 调用 | ✅ 已验证 | `skills/nlp_skill_caller/` |

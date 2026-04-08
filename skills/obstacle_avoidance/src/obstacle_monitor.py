@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
-避障监控核心类
+避障监控核心类（重构版）
 功能：实时监测激光雷达数据，检测障碍物，提供安全速度控制
+
+重构说明：
+- 不再继承 Node，改为接收 parent_node 参数
+- 避免 ROS2 中多个 Node 嵌套实例化的问题
 
 作者: gitwangkai
 日期: 2026-04-07
 """
 
-import rclpy
-from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Bool, Float32, String
@@ -16,18 +18,22 @@ import math
 from typing import Callable, Optional, Dict
 
 
-class ObstacleMonitor(Node):
+class ObstacleMonitor:
     """
-    避障监控节点
+    避障监控器（非 Node 类）
     
-    订阅激光雷达数据，实时检测障碍物，并可以：
-    1. 判断是否可以安全移动
-    2. 根据障碍物距离调整速度命令
-    3. 发布障碍物状态信息
+    使用方式：
+        class MyNode(Node):
+            def __init__(self):
+                self.obstacle_monitor = ObstacleMonitor(self)
+                
+            def timer_callback(self):
+                self.obstacle_monitor.spin_once()
     """
     
     def __init__(
         self,
+        parent_node,
         safety_distance: float = 0.5,
         slow_distance: float = 1.0,
         max_linear_speed: float = 0.5,
@@ -39,6 +45,7 @@ class ObstacleMonitor(Node):
         初始化避障监控器
         
         Args:
+            parent_node: 父 ROS2 Node 实例
             safety_distance: 安全距离（米），小于此距离停止
             slow_distance: 减速距离（米），小于此距离减速
             max_linear_speed: 最大线速度（m/s）
@@ -46,9 +53,7 @@ class ObstacleMonitor(Node):
             front_angle_range: 前方检测角度范围（度）
             side_angle_range: 侧方检测角度范围（度）
         """
-        super().__init__('obstacle_monitor')
-        
-        # 参数
+        self._parent = parent_node
         self._safety_distance = safety_distance
         self._slow_distance = slow_distance
         self._max_linear_speed = max_linear_speed
@@ -72,35 +77,21 @@ class ObstacleMonitor(Node):
         self._on_obstacle_detected: Optional[Callable] = None
         self._on_obstacle_cleared: Optional[Callable] = None
         
-        # 订阅激光雷达
-        self._scan_sub = self.create_subscription(
+        # 使用父 node 创建订阅器和发布器
+        self._scan_sub = parent_node.create_subscription(
             LaserScan,
             '/scan',
             self._scan_callback,
             10
         )
         
-        # 订阅速度命令
-        self._cmd_vel_sub = self.create_subscription(
-            Twist,
-            '/cmd_vel',
-            self._cmd_vel_callback,
-            10
-        )
-        
-        # 发布安全速度
-        self._safe_cmd_pub = self.create_publisher(Twist, '/cmd_vel_safe', 10)
-        
         # 发布障碍物状态
-        self._obstacle_status_pub = self.create_publisher(Bool, '/obstacle_status', 10)
-        self._obstacle_distance_pub = self.create_publisher(Float32, '/obstacle_distance', 10)
-        self._obstacle_direction_pub = self.create_publisher(String, '/obstacle_direction', 10)
+        self._obstacle_status_pub = parent_node.create_publisher(Bool, '/obstacle_status', 10)
+        self._obstacle_distance_pub = parent_node.create_publisher(Float32, '/obstacle_distance', 10)
+        self._obstacle_direction_pub = parent_node.create_publisher(String, '/obstacle_direction', 10)
         
-        # 定时器
-        self._status_timer = self.create_timer(0.1, self._publish_status)
-        
-        self.get_logger().info('避障监控器已启动')
-        self.get_logger().info(f'安全距离: {safety_distance}m, 减速距离: {slow_distance}m')
+        parent_node.get_logger().info('避障监控器已初始化')
+        parent_node.get_logger().info(f'安全距离: {safety_distance}m, 减速距离: {slow_distance}m')
         
     def _scan_callback(self, msg: LaserScan):
         """处理激光雷达数据"""
@@ -172,13 +163,8 @@ class ObstacleMonitor(Node):
         elif prev_detected and not self._obstacle_detected and self._on_obstacle_cleared:
             self._on_obstacle_cleared()
             
-    def _cmd_vel_callback(self, msg: Twist):
-        """处理速度命令，发布安全速度"""
-        safe_cmd = self.get_safe_velocity(msg)
-        self._safe_cmd_pub.publish(safe_cmd)
-        
-    def _publish_status(self):
-        """发布障碍物状态"""
+    def spin_once(self):
+        """单次处理，应由父 node 的 timer 调用"""
         # 发布障碍物状态
         status_msg = Bool()
         status_msg.data = self._obstacle_detected
@@ -211,7 +197,7 @@ class ObstacleMonitor(Node):
             if self._front_distance < self._safety_distance:
                 # 危险区域，禁止前进
                 safe_cmd.linear.x = 0.0
-                self.get_logger().warn(
+                self._parent.get_logger().warn(
                     f'前方障碍物距离: {self._front_distance:.2f}m，禁止前进！',
                     throttle_duration_sec=1.0
                 )
@@ -229,7 +215,7 @@ class ObstacleMonitor(Node):
         elif desired_cmd.linear.x < 0:  # 后退
             if self._rear_distance < self._safety_distance:
                 safe_cmd.linear.x = 0.0
-                self.get_logger().warn(
+                self._parent.get_logger().warn(
                     f'后方障碍物距离: {self._rear_distance:.2f}m，禁止后退！',
                     throttle_duration_sec=1.0
                 )
@@ -242,7 +228,7 @@ class ObstacleMonitor(Node):
         if desired_cmd.angular.z > 0:  # 左转
             if self._left_distance < self._safety_distance:
                 safe_cmd.angular.z = 0.0
-                self.get_logger().warn(
+                self._parent.get_logger().warn(
                     f'左方障碍物距离: {self._left_distance:.2f}m，禁止左转！',
                     throttle_duration_sec=1.0
                 )
@@ -251,7 +237,7 @@ class ObstacleMonitor(Node):
         elif desired_cmd.angular.z < 0:  # 右转
             if self._right_distance < self._safety_distance:
                 safe_cmd.angular.z = 0.0
-                self.get_logger().warn(
+                self._parent.get_logger().warn(
                     f'右方障碍物距离: {self._right_distance:.2f}m，禁止右转！',
                     throttle_duration_sec=1.0
                 )
@@ -331,7 +317,7 @@ class ObstacleMonitor(Node):
     @safety_distance.setter
     def safety_distance(self, value: float):
         self._safety_distance = value
-        self.get_logger().info(f'安全距离已更新为: {value}m')
+        self._parent.get_logger().info(f'安全距离已更新为: {value}m')
         
     @property
     def slow_distance(self) -> float:
@@ -340,7 +326,7 @@ class ObstacleMonitor(Node):
     @slow_distance.setter
     def slow_distance(self, value: float):
         self._slow_distance = value
-        self.get_logger().info(f'减速距离已更新为: {value}m')
+        self._parent.get_logger().info(f'减速距离已更新为: {value}m')
         
     @property
     def max_linear_speed(self) -> float:
@@ -357,22 +343,3 @@ class ObstacleMonitor(Node):
     @max_angular_speed.setter
     def max_angular_speed(self, value: float):
         self._max_angular_speed = value
-
-
-def main(args=None):
-    """主函数"""
-    rclpy.init(args=args)
-    
-    monitor = ObstacleMonitor()
-    
-    try:
-        rclpy.spin(monitor)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        monitor.destroy_node()
-        rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()

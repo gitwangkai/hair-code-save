@@ -89,6 +89,29 @@ runner.run([
 ])
 ```
 
+## 预定义复合动作
+
+### 复合动作：前进挥手旋转返回
+
+```bash
+# 直接执行
+bash /home/aidlux/run_skill_wave_return.sh
+
+# 或使用 Python
+python3 /home/aidlux/skills/action_runner/actions/complex_wave_return.py
+```
+
+动作序列：
+1. 前进1米 + 挥手
+2. 向右旋转360度（挥手同步）
+3. 左转 + 前进1米 + 点头
+4. 原路返回
+
+依赖 Skills:
+- `obstacle_avoidance`: 避障监控
+- `chassis_control`: 底盘移动
+- `arm_control`: 挥手、点头
+
 ## 配置文件
 
 创建 YAML 配置文件：

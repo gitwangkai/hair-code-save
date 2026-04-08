@@ -168,57 +168,62 @@ class ComplexActionDemo(Node):
         time.sleep(2)
         
     def execute_complex_action(self):
-        """执行复合动作"""
+        """执行复合动作
+        
+        指令：前进1米开始挥手，挥手时同步向右旋转360度
+              然后左转前进一米点头，最后原路返回
+        """
         self.get_logger().info('=' * 60)
         self.get_logger().info('开始执行复合动作')
         self.get_logger().info('=' * 60)
         
-        # 步骤1：前进2米 + 开始挥手
-        self.get_logger().info('\n【步骤1】前进2米并挥手')
+        # 步骤1：前进1米 + 开始挥手
+        self.get_logger().info('\n【步骤1】前进1米并挥手')
         
         # 创建挥手线程（并行执行）
         wave_thread = threading.Thread(target=self.wave_hand)
         wave_thread.start()
         
-        # 同时前进2米
-        if not self.move_distance(2.0, speed=0.2):
+        # 同时前进1米
+        if not self.move_distance(1.0, speed=0.2):
             self.get_logger().error('前进被阻挡，任务终止')
             return False
             
-        wave_thread.join()
-        
-        # 步骤2：向左旋转360度
-        self.get_logger().info('\n【步骤2】向左旋转360度')
-        if not self.rotate_angle(360, speed=0.5):
-            self.get_logger().error('旋转被阻挡')
+        # 步骤2：挥手时同步向右旋转360度
+        self.get_logger().info('\n【步骤2】向右旋转360度（同时挥手）')
+        # 右转360度（继续挥手）
+        if not self.rotate_angle(-360, speed=0.5):
+            self.get_logger().warn('旋转被阻挡')
             
-        # 步骤3：右转并前进1米
-        self.get_logger().info('\n【步骤3】右转并前进1米')
-        # 先右转90度
-        if not self.rotate_angle(-90, speed=0.5):
-            self.get_logger().warn('右转被阻挡，尝试继续前进')
+        wave_thread.join()  # 等待挥手完成
+        
+        # 步骤3：左转 + 前进1米 + 点头
+        self.get_logger().info('\n【步骤3】左转并前进1米')
+        # 左转90度
+        if not self.rotate_angle(90, speed=0.5):
+            self.get_logger().warn('左转被阻挡')
             
         # 前进1米
         if not self.move_distance(1.0, speed=0.2):
             self.get_logger().error('前进被阻挡')
             
-        # 步骤4：点头
+        # 点头
         self.get_logger().info('\n【步骤4】点头')
         self.nod_head()
         
-        # 步骤5：原路返回
+        # 步骤4：原路返回
         self.get_logger().info('\n【步骤5】原路返回')
         
         # 后退1米
         if not self.move_distance(-1.0, speed=0.2):
             self.get_logger().warn('后退被阻挡')
             
-        # 左转90度（恢复方向）
-        if not self.rotate_angle(90, speed=0.5):
-            self.get_logger().warn('左转被阻挡')
+        # 右转90度（恢复方向）
+        if not self.rotate_angle(-90, speed=0.5):
+            self.get_logger().warn('右转被阻挡')
             
-        # 后退2米
-        if not self.move_distance(-2.0, speed=0.2):
+        # 后退1米
+        if not self.move_distance(-1.0, speed=0.2):
             self.get_logger().warn('后退被阻挡')
             
         self.get_logger().info('\n' + '=' * 60)

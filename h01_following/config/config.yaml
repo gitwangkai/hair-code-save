@@ -1,0 +1,80 @@
+# H01 人体跟随系统 - 现场配置文件
+# 覆盖 settings.py 中的默认值
+
+# 相机配置
+camera:
+  rgb_topic: "/camera/color/image_raw"
+  depth_topic: "/camera/depth/image_rect_raw"
+  info_topic: "/camera/color/camera_info"
+  fps: 30
+  width: 640
+  height: 480
+
+# 激光雷达配置
+lidar:
+  scan_topic: "/scan"
+  frame_id: "laser_frame"
+  min_range: 0.1
+  max_range: 20.0
+
+# 人体检测配置
+detection:
+  model_path: "models/yolov8n-pose.onnx"
+  confidence_threshold: 0.5
+  nms_threshold: 0.45
+  input_size: 640
+  use_dsp: true  # 启用 QCS8550 DSP 加速
+
+# 目标跟踪配置
+tracking:
+  max_age: 30          # 目标消失多少帧后丢弃
+  min_hits: 3          # 至少连续确认几帧才算有效目标
+  iou_threshold: 0.3
+  reid_threshold: 0.6  # 重识别相似度阈值
+
+# 定位配置
+localization:
+  camera_frame: "camera_color_optical_frame"
+  base_frame: "base_link"
+  depth_scale: 0.001   # mm → m
+  smooth_alpha: 0.3    # 低通滤波系数
+
+# 避障配置
+avoidance:
+  safety_radius: 0.3   # 机器人外接圆半径(m)
+  slow_distance: 0.6   # 开始减速的障碍距离
+  stop_distance: 0.25  # 停止的障碍距离
+  cliff_topic: "/cliff_detected"
+  ultrasonic_topic: "/ultrasonic/range"
+
+# 运动控制配置
+motion:
+  cmd_vel_topic: "/cmd_vel"
+  follow_distance: 1.0   # 目标跟随距离(m)
+  distance_tol: 0.15     # 距离容差
+  angle_tol: 0.1         # 角度容差(rad)
+  max_linear_vel: 0.25   # 导航最大速度(m/s)
+  max_angular_vel: 0.8   # 最大角速度(rad/s)
+  kp_linear: 0.5         # 线速度 P 增益
+  kp_angular: 1.2        # 角速度 P 增益
+
+# 状态机配置
+state:
+  search_timeout: 5.0    # 搜索目标超时(s)
+  lost_timeout: 3.0      # 目标丢失超时(s)
+  reacquire_radius: 2.0  # 重搜索半径(m)
+
+# 语音配置
+voice:
+  enabled: true
+  language: "zh-CN"
+  tts_engine: "espeak"   # 或 "edge-tts"
+  volume: 0.8
+
+# 显示配置
+display:
+  enabled: true
+  screen_topic: "/display/image"
+  width: 1920
+  height: 1080
+  show_debug: false

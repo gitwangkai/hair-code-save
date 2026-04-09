@@ -1,0 +1,33 @@
+# H01 人体跟随系统 - Python 依赖
+
+# 核心依赖
+numpy>=1.21.0
+pyyaml>=6.0
+
+# ROS 2 接口（系统安装）
+# rclpy
+# sensor_msgs
+# geometry_msgs
+# std_msgs
+# cv_bridge
+
+# 计算机视觉
+opencv-python>=4.7.0
+# ultralytics>=8.0.0  # YOLOv8（可选，用于模型导出）
+# onnx>=1.14.0        # ONNX 导出（可选）
+# onnxsim>=0.4.0      # ONNX 简化（可选）
+
+# 跟踪算法
+# bytetracker>=0.1.0  # ByteTrack（可选）
+
+# 语音合成
+# pyttsx3>=2.90       # TTS（可选）
+# edge-tts>=6.1.0     # Edge TTS（可选）
+
+# 开发工具
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+
+# 性能分析
+# line_profiler>=4.0.0
+# memory_profiler>=0.60.0

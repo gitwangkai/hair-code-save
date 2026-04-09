@@ -26,21 +26,23 @@
 
 ## 重要：坐标系说明
 
-⚠️ **本机器人显示器云台使用特殊坐标系**（已验证）：
+⚠️ **本机器人显示器云台角度范围**（已验证）：
 
 | 位置 | 弧度值 | 说明 |
 |------|--------|------|
-| **最大抬头** | -3.0 rad (-172°) | 上限位置 |
-| **中间位置** | -3.35 rad (-192°) | 水平视线 |
-| **最大低头** | -3.7 rad (-212°) | 下限位置 |
+| **最大抬头** | -3.0 rad | 接近上限 |
+| **中间位置** | -3.35 rad | 水平视线 |
+| **最大低头** | -3.7 rad | 接近下限 |
 
 **运动方向**：
 - 数值增大（如 -3.7 → -3.0）= **抬头**
 - 数值减小（如 -3.0 → -3.7）= **低头**
 
-**限位**：
-- 上限：`/head_upper_limit` = -3.008 rad
-- 下限：`/head_lower_limit` = -3.709 rad
+**限位**（实时读取）：
+- 上限（抬头）：`/head_upper_limit` ≈ -3.01 rad
+- 下限（低头）：`/head_lower_limit` ≈ -3.71 rad
+
+> 注意：话题名称中的 "upper/lower" 对应电机内部坐标系，与实际的抬头/低头方向相反。
 
 ---
 
@@ -49,11 +51,11 @@
 ### 1. ROS2 命令行控制
 
 ```bash
-# 抬头到上限
-ros2 topic pub --once /target_head_position std_msgs/msg/Float32 "{data: -3.0}"
+# 抬头（数值大，接近-3.0）
+ros2 topic pub --once /target_head_position std_msgs/msg/Float32 "{data: -3.1}"
 
-# 低头到下限
-ros2 topic pub --once /target_head_position std_msgs/msg/Float32 "{data: -3.7}"
+# 低头（数值小，接近-3.7）
+ros2 topic pub --once /target_head_position std_msgs/msg/Float32 "{data: -3.6}"
 
 # 归中位置
 ros2 topic pub --once /target_head_position std_msgs/msg/Float32 "{data: -3.35}"

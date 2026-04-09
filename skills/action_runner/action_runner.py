@@ -88,25 +88,33 @@ class ROS2Manager:
         return self.initialized and rclpy and rclpy.ok()
     
     def publish_cmd_vel(self, linear_x=0.0, angular_z=0.0, duration=0.0):
-        """发布底盘速度"""
+        """发布底盘速度 - 增强版，带错误处理"""
         if not self.is_ok():
-            print("  ✗ ROS2未就绪")
-            return
+            print("  ✗ ROS2未就绪，尝试重新初始化...")
+            self.init()
+            if not self.is_ok():
+                print("  ✗ ROS2重新初始化失败")
+                return
         
         msg = Twist()
         msg.linear.x = float(linear_x)
         msg.angular.z = float(angular_z)
         
         start = time.time()
-        while time.time() - start < duration:
-            self.cmd_vel_pub.publish(msg)
-            time.sleep(0.1)
-        
-        # 停止
-        self.cmd_vel_pub.publish(Twist())
+        try:
+            while time.time() - start < duration:
+                if self.is_ok():
+                    self.cmd_vel_pub.publish(msg)
+                time.sleep(0.1)
+            
+            # 停止
+            if self.is_ok():
+                self.cmd_vel_pub.publish(Twist())
+        except Exception as e:
+            print(f"  ⚠ 发布失败: {e}")
     
     def publish_head(self, angle_rad, duration=0.5):
-        """发布云台角度"""
+        """发布云台角度 - 增强版，确保电机响应"""
         if not self.is_ok():
             print("  ✗ ROS2未就绪")
             return
@@ -114,10 +122,11 @@ class ROS2Manager:
         msg = Float32()
         msg.data = float(angle_rad)
         
-        steps = int(duration * 20)
+        # 增加发布频率和持续时间，确保电机收到指令
+        steps = int(duration * 50)  # 50Hz发布频率
         for _ in range(steps):
             self.head_pub.publish(msg)
-            time.sleep(0.05)
+            time.sleep(0.02)  # 20ms间隔
 
 
 ros2_mgr = ROS2Manager()
@@ -157,17 +166,23 @@ def run_stop():
 def run_nod(times: int = 3):
     print(f"  点头{times}次...")
     
-    LOOK_UP = -3.2
-    LOOK_DOWN = -3.6
-    CENTER = -3.35
+    # 根据实际硬件角度限制: -3.71 ~ -3.01 rad
+    # 数值越大(接近-3.0) = 抬头，数值越小(接近-3.7) = 低头
+    LOOK_UP = -3.1      # 抬头 (数值较大)
+    LOOK_DOWN = -3.6    # 低头 (数值较小)
+    CENTER = -3.35      # 中间位置
     
     for i in range(times):
-        ros2_mgr.publish_head(LOOK_DOWN, 0.3)
-        time.sleep(0.2)
-        ros2_mgr.publish_head(LOOK_UP, 0.3)
-        time.sleep(0.2)
+        print(f"    第{i+1}次: 低头...")
+        ros2_mgr.publish_head(LOOK_DOWN, 0.5)
+        time.sleep(0.4)
+        print(f"    第{i+1}次: 抬头...")
+        ros2_mgr.publish_head(LOOK_UP, 0.5)
+        time.sleep(0.4)
     
-    ros2_mgr.publish_head(CENTER, 0.3)
+    print("  归中...")
+    ros2_mgr.publish_head(CENTER, 0.5)
+    time.sleep(0.2)
     print("  ✓ 点头完成")
 
 
@@ -189,16 +204,43 @@ def run_center():
     print("  ✓ 归中完成")
 
 
-# ========== 机械臂动作（简化版） ==========
+# ========== 机械臂动作（独立进程执行） ==========
 def run_wave_simple():
     """
-    挥手 - 由于PallasSDK与ROS2冲突，使用提示方式
-    实际项目中应该使用独立的进程间通信
+    挥手 - 使用subprocess独立执行，避免PallasSDK与ROS2冲突
+    
+    挥手动作参数:
+    - J1 = 75° (水平侧伸)
+    - J3 = ±20° (摆动幅度)
+    - 速度 = 45 (适度加快)
+    - 延迟 = 0.25s
+    
+    挥手完成后自动回到零位 [0,0,0,0,0,0]
     """
-    print("  挥手（提示）...")
-    print("  [注意] 挥手需要独立执行: python3 /home/aidlux/human_detection/src/wave_hand_standalone.py")
-    time.sleep(1)
-    print("  ✓ 挥手提示完成")
+    import subprocess
+    
+    print("  挥手...")
+    script_path = "/home/aidlux/human_detection/src/wave_hand_standalone.py"
+    
+    try:
+        # 同步执行挥手脚本，等待完成
+        result = subprocess.run(
+            ["python3", script_path],
+            capture_output=True,
+            text=True,
+            timeout=60  # 最多等待60秒
+        )
+        
+        if result.returncode == 0:
+            print("  ✓ 挥手完成（已回到零位）")
+        else:
+            print(f"  ⚠ 挥手执行异常")
+            if result.stderr and "错误" in result.stderr:
+                print(f"    详情: {result.stderr[:150]}")
+    except subprocess.TimeoutExpired:
+        print("  ⚠ 挥手执行超时（超过60秒）")
+    except Exception as e:
+        print(f"  ⚠ 挥手执行失败: {e}")
 
 
 def run_wait(seconds: float = 1.0):

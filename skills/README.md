@@ -20,9 +20,9 @@ skills/
 
 | Skill | 描述 | 状态 | 路径 |
 |-------|------|------|------|
-| [arm_control](./arm_control/) | NX-7 机械臂控制 | ✅ 已验证 | `skills/arm_control/` |
+| [arm_control](./arm_control/) | NX-7 机械臂控制（含挥手） | ✅ 已验证 | `skills/arm_control/` |
 | [chassis_control](./chassis_control/) | 底盘运动控制 | ✅ 已验证 | `skills/chassis_control/` |
-| [head_control](./head_control/) | 显示器云台控制 | ✅ 已验证 | `skills/head_control/` |
+| [head_control](./head_control/) | 显示器云台控制（点头） | ✅ 已验证 | `skills/head_control/` |
 | [action_runner](./action_runner/) | 复合动作执行器 | ✅ 已验证 | `skills/action_runner/` |
 | ~~obstacle_avoidance~~ | ~~激光雷达避障控制~~ | ~~已禁用~~ | ~~`skills/obstacle_avoidance_bak/`~~ |
 
